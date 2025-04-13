@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 export interface Message {
@@ -19,8 +18,8 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
         >
             <div
                 className={`max-w-[80%] p-4 rounded-lg ${isUser
-                        ? "bg-blue-600 text-white rounded-tr-none"
-                        : "bg-gray-800 rounded-tl-none"
+                    ? "bg-blue-600 text-white rounded-tr-none"
+                    : "bg-gray-800 rounded-tl-none"
                     }`}
             >
                 {isUser ? (

@@ -169,7 +169,7 @@ def create_graph():
         if state.get("proceed_to_generate", False):
             print("Routing to generate_answer")
             return "generate_answer"
-        elif rephrase_count >= 2:
+        elif rephrase_count >= 1:
             print("Maximum rephrase attempts reached. Cannot find relevant documents.")
             return "cannot_answer"
         else:
@@ -242,18 +242,22 @@ def create_graph():
     
         content = result["messages"][-1].content
         state["messages"].append(AIMessage(content=content))
+
+        print(content, "research_node content")
     
         return state
     
     def cannot_answer(state: AgentState) -> Command[Literal["research_node", END]]:
         print("Entering cannot_answer")
             
-        is_approved = interrupt("The system was not able to find the answer. Your approval is needed to make an internet search. Respond with 'yes' or 'no'")
+        # is_approved = interrupt("The system was not able to find the answer. Your approval is needed to make an internet search. Respond with 'yes' or 'no'")
+
+        return state
     
-        if is_approved: 
-            return Command(goto="research_node")
-        else:
-            return Command(goto=END)
+        # if is_approved: 
+        #     return Command(goto="research_node")
+        # else:
+        #     return Command(goto=END)
         
     def off_topic_response(state: AgentState):
         print("Entering off_topic_response")
@@ -298,6 +302,7 @@ def create_graph():
     )
     workflow.add_edge("refine_question", "retrieve")
     workflow.add_edge("generate_answer", END)
+    workflow.add_edge("cannot_answer", "research_node")
     workflow.add_edge("research_node", END)
     workflow.add_edge("off_topic_response", END)
     workflow.set_entry_point("question_rewriter")
