@@ -8,7 +8,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Langchain Course",
+  title: "LangGraph Crash Course",
   description: "",
 };
 
