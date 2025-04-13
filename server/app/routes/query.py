@@ -21,7 +21,7 @@ def invoke(request: QueryInput) -> Dict[str, Any]:
         response = process_query(request.content, request.thread_id)
 
         return {
-            "answer": f"Final answer is: {response["messages"][-1].content}", 
+            "answer": response["messages"][-1].content, 
             "success": True
         }
     

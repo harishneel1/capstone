@@ -4,14 +4,29 @@ import Output from "@/components/Output";
 import TextArea from "@/components/TextArea";
 import { type ChatOutput } from "@/types";
 import { useState } from "react";
+import MessageBubble, { Message } from "@/components/MessageBubble";
+import ChatWindow from "@/components/ChatWindow";
+
 
 export default function Home() {
   const [currentQuery, setCurrentQuery] = useState("");
-  const [history, setHistory] = useState([])
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent, query: string) => {
-    e.preventDefault()
+    e.preventDefault();
+
+    if (!query.trim()) return;
+
+    // Add user message to the chat
+    const userMessage: Message = {
+      role: "user",
+      content: query,
+    };
+
+    setMessages((prev) => [...prev, userMessage]);
     setCurrentQuery("");
+    setIsLoading(true);
 
     try {
       const response = await fetch(`http://localhost:8000/invoke`, {
@@ -26,16 +41,38 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error("Error");
+        throw new Error("Error fetching response");
       }
 
-      const data = await response.json()
-      const { answer } = data || {};
+      const data = await response.json();
 
+      if (data && data.answer) {
+        const aiMessage: Message = {
+          role: "assistant",
+          content: data.answer,
+        };
 
+        setMessages((prev) => [...prev, aiMessage]);
+      } else {
+        const errorMessage: Message = {
+          role: "assistant",
+          content: "Sorry, I couldn't process your request at this time.",
+        };
+
+        setMessages((prev) => [...prev, errorMessage]);
+      }
     } catch (error) {
       console.error(error);
+
+      // Add error message to chat
+      const errorMessage: Message = {
+        role: "assistant",
+        content: "An error occurred while processing your request. Please try again.",
+      };
+
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -51,15 +88,14 @@ export default function Home() {
           </h1>
         )}
 
+        <ChatWindow messages={messages} />
+
         <TextArea
           onSubmit={handleSubmit}
           currentQuery={currentQuery}
           setCurrentQuery={setCurrentQuery}
         />
 
-        {history.map((item, i) => {
-          return <Output key={i} output={item} />;
-        })}
       </div>
     </div>
   );
