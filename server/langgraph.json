@@ -1,0 +1,8 @@
+{
+    "dependencies": [
+        "."
+    ],
+    "graphs": {
+        "tutor": "app.services.graph:create_graph"
+    }
+}
