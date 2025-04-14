@@ -78,11 +78,11 @@ export default function Home() {
 
   return (
     <div
-      className={`container pt-10 pb-32 min-h-screen ${history.length === 0 && "flex items-center justify-center"
+      className={`container pt-10 pb-32 min-h-screen ${messages.length === 0 && "flex items-center justify-center"
         }`}
     >
       <div className="w-full">
-        {history.length === 0 && (
+        {messages.length === 0 && (
           <h1 className="text-4xl text-center mb-5">
             Ask me a Question!
           </h1>

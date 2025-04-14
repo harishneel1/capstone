@@ -238,7 +238,7 @@ def create_graph():
         """
         )
     
-        result = research_agent.invoke(state, stream_mode="update")
+        result = research_agent.invoke(state)
     
         content = result["messages"][-1].content
         state["messages"].append(AIMessage(content=content))
